@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CRM</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+      <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-form {
+    background-color:#637EC6;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-form h2 {
+	margin-top: -10px;
+    margin-bottom: 10px;
+    color: White;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.forgot-password {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+  </style>
+</head>
+<body>
+
+<div class="login-container" >
+<div style="background-color:white">
+    <form class="login-form" th:action="@{/login}" method="post">
+    <div >
+<img alt="image" class="img-circle" style="width:200px;height:150px;"
+							th:src="@{
+https://metaimg.sundirectgo.in/icons/sund_logo_portal.png}">
+</div>
+        <h2>Sun DIRECT GO CRM</h2>
+        <div th:if="${param.error != null}"
+					class="alert alert-danger alert-dismissable">
+<button aria-hidden="true" data-dismiss="alert" class="close"
+						type="button"></button>
+					Invalid User / Password.
+</div>
+        <div class="form-group">
+            <input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+        
+    </form>
+    </div>
+</div>
+
+</body>
+</html>

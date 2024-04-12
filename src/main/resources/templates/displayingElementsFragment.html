@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+</head>
+<body>
+	<div th:fragment='displayingElements'>
+		<label th:if="${pager.totalPages == 0}">Displaying 0 entries</label> <label
+			th:if="${pager.totalPages != 0}">Displaying <strong
+			th:text="${pager.numberOfElements}"></strong> of <strong
+			th:text="${pager.totalElements}"></strong> entries
+		</label>
+	</div>
+
+</body>
+</html>

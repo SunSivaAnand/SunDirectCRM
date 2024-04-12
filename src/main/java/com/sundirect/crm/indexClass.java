@@ -7,9 +7,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class indexClass {
 
 	
-	@GetMapping("/")
+	@GetMapping("/login")
     public String viewHomePage(Model model) {
 		model.addAttribute("message", "Hello Thymeleaf");
-        return "index";
+        return "login";
+    }
+	
+	
+
+	@GetMapping("/layout")
+    public String layout(Model model) {
+		model.addAttribute("message", "Hello Thymeleaf");
+        return "layoutLogged";
+    }
+	
+	@GetMapping("/subscriber1/info1")
+    public String subscriber(Model model) {
+		model.addAttribute("message", "Hello Thymeleaf");
+        return "subscriber";
     }
 }

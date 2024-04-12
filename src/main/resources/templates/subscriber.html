@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layoutLogged">
+<head>
+   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriber - CRM</title>
+    
+</head>
+
+<body>
+<section layout:fragment="content">
+    <!-- Navigation menu start -->
+    <!-- <div th:include="navigationFragment :: navigationBar"></div> -->
+    <!-- Navigation menu end -->
+    <!-- <div th:if="${pager.totalPages == 0}" class="alert alert-danger alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        No Results found
+    </div> -->
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>View Subscribers</h5>
+                        <form id="myForm" th:action="@{https://console.firebase.google.com/u/0/}" method="get"
+                              target="_blank">
+                            <a style="color: #E74C3C; font-weight: bold; margin-left: 50px; text-decoration: underline;"
+                               href="#" onclick="document.getElementById('myForm').submit()">Crash reports</a>
+                        </form>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">Config option 1</a></li>
+                                <li><a href="#">Config option 2</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="search_bar">
+                            <form id="searchForm" class="navbar-form" role="search">
+                                <div class="col-sm-6">
+                                    <select class="form-control carousel-search-select valid searchType"
+                                            id="searchType2" aria-invalid="false" name="requestType"
+                                            th:object="${filter}">
+                                        <option value="">Select</option>
+                                        <option value="UserID" th:selected="${filter == 'UserID'}">Search By UserId
+                                        </option>
+                                        <option value="SMC" th:selected="${filter == 'SMC'}">Search By SMC</option>
+                                        <option value="MobileNo" th:selected="${filter == 'MobileNo'}">Search By mobile
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="input-group clearable-input col-sm-6">
+                                    <input type="text" class="form-control" placeholder="Search subscriber mobileNo"
+                                           id="query" name="query" th:value="${query}">
+                                    <span data-clear-input>&times;</span>
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary" data-target="#searchAdd" id="searchButton"
+                                                type="submit">GO!
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div th:if="${user != null}" id="userDetails">
+                            <h2 style="color: #6495ED; font-weight: bold; text-decoration: underline;">User Details:</h2>
+                            <div th:each="user : ${user}">
+                                <dl class="user-details-list">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <dt id="userId">User ID: <span th:text="${user.id}"></span></dt> <br/>
+                                            <dt>Name: <span th:text="${user.fields.first + ' ' + user.fields.last}"></span></dt> <br/>
+                                            <dt>Mobile No: <span th:text="${user.fields.mobileNo}"></span></dt>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <dt>SMC: <span th:text="${user.fields.smc}"></span></dt><br/>
+                                            <dt>Email: <span th:text="${user.fields.emailId}"></span></dt><br/>
+                                            <dt>Address: <span></span></dt>
+                                        </div>
+                                    </div>
+                                </dl>
+                                <br/>
+                                <div style="display: flex; margin-bottom: 10px;">
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#subscription', data-userid=${user.id}"
+                                            onclick="subscriptionInfo(this.getAttribute('data-userid'))"
+                                            type="button">Subscription Info
+                                    </button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#device', data-userid=${user.id}"
+                                            onclick="deviceInfo(this.getAttribute('data-userid'))"
+                                            type="button">Device Info
+                                    </button>
+                                    <button style="margin: 0 3px;" class="btn btn-info" data-toggle="modal"
+                                            th:attr="data-target='#other' ,data-userid=${user.id}"
+                                            onclick="otherInfo(this.getAttribute('data-userid'))"
+                                            type="button">Other Info
+                                    </button>
+                                   <div th:if="${showButtom}">
+<button style="margin: 0 550px;" class="btn btn-info" data-toggle="modal"
+                                            data-target='#createPlan' type="button">Add subscription
+</button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${user == null}">
+                            <span style="color: #C0392B; font-weight: bold;" th:text="${message}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="subscription" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:800px;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subscriptionLabel">Subscription Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <table id="activePlanTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Status</th>
+                                <th>Plan Name</th>
+                                <th>Start_From</th>
+                                <th>Valid_Till</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Modal -->
+    <div class="modal fade" id="device" tabindex="-1" role="dialog" aria-labelledby="deviceLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deviceLabel">Device Info</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <div style="font-weight: bold; color: green;">No of times App Launched: <span id="appLaunchCount" style="color: green;"></span></div>
+                    <table class="table" id="deviceTable">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Model</th>
+                                <th>Os</th>
+                                <th>Os_version</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="modal-body" style="background-color: white;">
+                    <span style="color: #C0392B; font-weight: bold;" th:text="${message}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="createPlan" tabindex="-1" role="dialog" aria-labelledby="subscriptionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="subscriptionLabel">Subscription</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background-color: white;">
+               <form id="subscriptionForm">
+    <input type="hidden" value="create" class="form-control" name="action">
+    
+    <div class="form-group">
+        <label for="planName">Plan Name</label>
+        <!-- Select dropdown -->
+       <select class="form-control" aria-invalid="false" name="packageIds" id="packageIds" required=true>
+       <option value="">Select</option>
+   
+    <!-- Loop through the JSON array and dynamically generate options  -->
+    <option th:each="plan : ${finalList}" th:value="${plan.fields.sdPlanId}" th:text="${plan.fields.plan_name}"></option>
+</select>
+    </div>
+    
+    <!-- User information -->
+    <div th:each="user : ${user}">
+        <div class="form-group">
+            <label for="smc">SMC</label>
+            <input readonly th:value="${user.fields.smc}" type="text" class="form-control" id="smc" name="smc">
+        </div>
+        <div class="form-group">
+            <label for="mobileNo">Mobile No</label>
+            <input readonly th:value="${user.fields.mobileNo}" type="text" class="form-control" id="mobileNo" name="mobileNo">
+        </div>
+    </div>
+</form>
+
+            </div>
+            <div class="modal-footer" style="background-color: white;">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Other Modal -->
+    <!-- Other Modal -->
+<div class="modal fade" id="other" tabindex="-1" role="dialog" aria-labelledby="otherLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document"> <!-- Changed modal width to large -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otherLabel">Other Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="background-color: white;">
+              <div class="col-sm-6">
+    <div class="col-sm-1">
+        <h5 style="padding-top: 8px">From:</h5>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-group" id="data_10">
+            <div class="input-group date">
+                <input type="date" id="_planFromDate" name="_planFromDate" class="form-control" >
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <h5 style="padding-top: 8px; padding-left: 10px">To:</h5>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group" id="data_10">
+            <div class="input-group date">
+                <input type="date" id="_planToDate" name="_planToDate" class="form-control" >
+            </div>
+        </div>
+    </div>
+    
+</div>
+  <div th:if="${user != null}" id="userDetails">
+   <div th:each="user : ${user}">
+<div class="col-sm-1" style="padding-left: 20px;">
+        <button class="btn btn-primary" th:attr="data-target='#other' ,data-userid=${user.id}"
+                                            onclick="otherInfo(this.getAttribute('data-userid'))" id="searchButton" type="submit" >Click Here!</button>
+    </div>
+     </div>
+</div>
+                <table class="table" id="otherTable">
+                    <thead>
+                        <tr>
+                            <th>Content Id</th>
+                            <th>Content Name</th>
+                            <th>Type</th>
+                            <th>Studio</th>
+                            <th>Action</th>
+                            <th>Elapsed Time (sec)</th>
+                            <th>Event Created</th>
+                            <th>Event Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ <script>
+    // Open Firebase console in a new tab
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("myForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            window.open(this.action, '_blank');
+        });
+    });
+</script>
+<script>
+
+async function subscriptionInfo(userId) {
+    var url = '/api/user/subscription/'+userId+'/IN';
+    var modal = document.getElementById('subscription'); // Get the modal element
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        // Update the modal content with the retrieved data
+        
+        updateModalContent(data);
+        
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function updateModalContent(data) {
+    // Update Active Plan table
+    console.log(data.results)
+   
+    var activePlanTable = document.getElementById('activePlanTable');
+    updateTable(activePlanTable, data);
+
+    // Update Expired Plan table
+   // var expiredPlanTable = document.getElementById('expiredPlanTable');.results
+   // updateTable(expiredPlanTable, data.Expired);
+   
+}
+
+function updateTable(table, planData) {
+    // Clear existing rows
+    var tbody = table.getElementsByTagName('tbody')[0];
+    tbody.innerHTML = '';
+
+    // Update the table with new data
+    if (planData.status === "SUCCESS" && planData.results.length > 0) {
+        for (let index = planData.results.length - 1; index >= 0; index--) {
+            let plan = planData.results[index];
+            var row = tbody.insertRow();
+
+            var validFrom = plan.validityFrom;
+            var validTill = plan.validityTill;
+
+            // Create Date objects using the timestamps
+            var from = new Date(validFrom);
+            var to = new Date(validTill);
+
+            var cell = row.insertCell(0);
+            cell.textContent = planData.results.length - index;
+
+            cell = row.insertCell(1);
+            var button = document.createElement("button");
+            button.textContent = plan.status;
+            if (plan.status === "Active") {
+                button.classList.add("green-button");
+            } else if (plan.status === "Expired") {
+                button.classList.add("red-button");
+            }
+            cell.appendChild(button);
+
+            cell = row.insertCell(2);
+            cell.textContent = plan.plan.name;
+
+            cell = row.insertCell(3);
+            cell.textContent = from.toISOString().slice(0, 10); // Display date only
+
+            cell = row.insertCell(4);
+            cell.textContent = to.toISOString().slice(0, 10); // Display date only
+        }
+    } else {
+        var row = tbody.insertRow();
+        var cell = row.insertCell(0);
+        cell.colSpan = "5";
+        cell.innerHTML = "<b>No data is available</b>";
+    }
+}
+
+
+
+</script>
+
+<script>
+
+async function deviceInfo(userId) {
+    var url = '/deviceInfo?userId=' + userId;
+    var modal = document.getElementById('device'); // Get the modal element
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+        const data = await response.json();
+        console.log(data);
+        // Update the modal content with the retrieved data
+       updateDeviceInfo(data);
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function updateDeviceInfo(data) {
+    // Update Active Plan table
+    var appLaunchCount = data.deviceList[0].inc;
+
+    // Update the HTML element with the app launch count
+    var appLaunchElement = document.getElementById('appLaunchCount');
+    if (appLaunchElement) {
+        appLaunchElement.textContent = appLaunchCount;
+    } else {
+        console.error("Element with ID 'appLaunchCount' not found.");
+    }
+    
+    var activePlanTable = document.getElementById('deviceTable');
+    updateDeviceTable(activePlanTable, data.deviceList);
+
+    // Update Expired Plan table
+    
+    
+    
+}
+function updateDeviceTable(table, planData) {
+    // Clear existing rows
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+
+    // Update the table with new data
+    planData.forEach(function (plan, index) {
+        var row = table.getElementsByTagName('tbody')[0].insertRow();
+        console.log(plan.message);
+        
+        if (plan.message === "success") {
+   //  console.log(dateObject);
+        var cell = row.insertCell(0);
+        cell.textContent = plan.device.fields.make;
+        cell = row.insertCell(1);
+        cell.textContent =plan.device.fields.model;
+        cell = row.insertCell(2);
+        cell.textContent =plan.device.fields.os ;
+        cell = row.insertCell(3);
+        cell.textContent =plan.device.fields.os_version ;
+        } else {
+            var cell = row.insertCell(0);
+            cell.textContent =plan.message;
+           
+        }
+        
+    });
+}
+
+</script>
+<script>
+async function otherInfo(userId) {
+	// Get the input element
+	var fromDateInput = document.getElementById('_planFromDate');
+	var toDateInput = document.getElementById('_planToDate');
+	
+	// Get the value of the input element
+	var fromDateValue = fromDateInput.value;
+	var toDateValue = toDateInput.value;
+    var url = '/otherInfo?userId=' + userId+'&startDate='+fromDateValue+'&endDate='+toDateValue;
+    var modal = document.getElementById('other'); // Get the modal element
+ 
+    try {
+        const response = await fetch(url);
+ 
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.status);
+        }
+ 
+        const data = await response.json();
+ 
+        console.log(data);
+ 
+        // Update the modal content with the retrieved data
+       updateOtherInfo(data);
+ 
+        // Show the modal
+        $(modal).modal('show');
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+ 
+function updateOtherInfo(data) {
+    // Update Active Plan table
+    var activePlanTable = document.getElementById('otherTable');
+    updateOtherTable(activePlanTable, data.otherInfo);
+ 
+    // Update Expired Plan table
+
+}
+function updateOtherTable(table, planData) {
+    // Clear existing rows
+    table.getElementsByTagName('tbody')[0].innerHTML = '';
+ 
+    // Update the table with new data
+    planData.forEach(function (plan, index) {
+        var row = table.getElementsByTagName('tbody')[0].insertRow();
+        if (plan.message === "success") {
+        var create = plan.playerEvent.fields.created_at;
+ 
+        // Create a Date object using the timestamp
+        var from = new Date(create);
+        var modified = plan.playerEvent.fields.modified_at;
+ 
+        // Create a Date object using the timestamp
+        var to = new Date(modified);
+   //  console.log(dateObject);
+        var cell = row.insertCell(0);
+        cell.textContent = plan.asset.assetId;
+      //  console.log(  cell.textContent);
+        cell = row.insertCell(1);
+        cell.textContent =plan.asset.name;
+        cell = row.insertCell(2);
+        cell.textContent =plan.asset.type ;
+        cell = row.insertCell(3);
+        cell.textContent =plan.asset.studioName ;
+        cell = row.insertCell(4);
+        cell.textContent =plan.playerEvent.fields.action ;
+        cell = row.insertCell(5);
+        cell.textContent =plan.playerEvent.fields.elapsed_time ;
+        cell = row.insertCell(6);
+        cell.textContent =from.toISOString().slice(0, 30); ;
+        cell = row.insertCell(7);
+        cell.textContent =to.toISOString().slice(0, 30); ;
+        } else {
+            var cell = row.insertCell(0);
+            cell.textContent =plan.message1;
+        }
+    });
+}
+
+</script>
+<script>
+    function submitForm() {
+        var form = document.getElementById("subscriptionForm");
+        var formData = new FormData(form);
+        var jsonData = {};
+        formData.forEach(function(value, key) {
+            jsonData[key] = value;
+        });
+        fetch('/api/v1/apiOrder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+        	if(data.code==200){
+        	$('#createPlan').modal('hide');
+            // Handle success
+            console.log('Success:', data);
+            swal("Success!", "Subscription provided successfully", "success");
+        	}else{
+        		swal("Failed!", "something went wrong", "error");
+        		
+        	}
+            // You can show a success message or perform any other action
+        })
+        .catch(error => {
+        	$('#createPlan').modal('hide');
+        	 swal("Failed!", "something went wrong", "error");
+            // Handle errors
+            console.error('Error:', error);
+            // You can show an error message or perform any other action
+        });
+    }
+</script>
+<script>
+function eventData1(){
+
+	// Get the input element
+	var fromDateInput = document.getElementById('_planFromDate');
+	var toDateInput = document.getElementById('_planToDate');
+	
+	// Get the value of the input element
+	var fromDateValue = fromDateInput.value;
+	var toDateValue = toDateInput.value;
+
+	// Now, fromDateValue contains the value of the input field
+	console.log(fromDateValue);
+	console.log(toDateValue);
+
+}
+</script>
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.searchType').select2({
+            placeholder: 'Search for an option',
+            allowClear: true // Optional, adds a clear button
+        });
+    });
+</script>
+ <script type="text/javascript">
+ jQuery(document).ready(function($) {
+        $('#packageIds1').select2({
+            placeholder: 'Search for a package',
+            allowClear: true // Optional, adds a clear button
+        });
+    });
+</script>
+
+
+<style>
+.green-button {
+    background-color: green;
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 5px 10px; /* Adjust padding */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+.red-button {
+    background-color: red;
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 5px 10px; /* Adjust padding */
+    border-radius: 5px; /* Optional: Add rounded corners */
+}
+
+
+</style>
+
+
+</section>
+
+<div layout:fragment="customscripts">
+    <!-- Your custom scripts -->
+   
+
+
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title>Sundirect CRM</title>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/plugins/footable/footable.core.css}"
+	rel="stylesheet" />
+<link
+	th:href="@{/css/plugins/dualListbox/bootstrap-duallistbox.min.css}"
+	rel="stylesheet" />
+
+<link th:href="@{/css/plugins/daterangepicker/daterangepicker-bs3.css}"
+	rel="stylesheet">
+<link th:href="@{/css/plugins/sweetalert/sweetalert.css}"
+	rel="stylesheet">
+
+<link th:href="@{/css/animate.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet" />
+<link th:href="@{/css/cms.css}" rel="stylesheet" />
+<link rel="icon" type="image/x-icon" th:href="@{https://metaimg.sundirectgo.in/icons/SunDirect_Go.png}" />
+</head>
+<body>
+	<div id="pageloader">
+		<div class="loader-item">
+			<div class="spiner-example">
+				<div class="sk-spinner sk-spinner-wave">
+					<div class="sk-rect1"></div>
+					<div class="sk-rect2"></div>
+					<div class="sk-rect3"></div>
+					<div class="sk-rect4"></div>
+					<div class="sk-rect5"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Header Part Start -->
+	<!-- side menu start-->
+	<nav class="navbar-default navbar-static-side" role="navigation">
+		<div class="sidebar-collapse">
+			<ul class="nav metismenu" id="side-menu"
+				sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_USER')">
+				<li class="nav-header">
+					<div class="dropdown profile-element">
+						<span> <img alt="image" class="img-circle" style="width:140px;height:110px;"
+							th:src="@{https://metaimg.sundirectgo.in/icons/sund_logo_portal.png}">
+						</span>
+					</div> <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+						<div class="logo-element">
+							<img alt="image" class="img-circle"
+								th:src="@{https://metaimg.sundirectgo.in/icons/sund_logo_portal.png}">
+						</div>
+				</a>
+				</li>
+               
+		<!-- -		<li
+					th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active':''}"><a
+					th:href="@{/dashboard}"><img th:src="@{/images/dashboard.png}" /><span
+						class="nav-label">Dashboard</span></a> -->
+				<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'subscriber') ? 'active':''}"><a
+					th:href="@{|/sms/subscriber/info|}"><img
+						th:src="@{/images/subscribers_menu.png}" /><span
+						class="nav-label">Subscriber</span></a></li>
+						<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'plan') ? 'active':''}"><a
+					th:href="@{|/api/Allplans?status=Active|}"><img
+						th:src="@{/images/subscribers_menu.png}" /><span
+						class="nav-label">All Plans</span></a></li>
+						<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'live') ? 'active':''}"><a
+					th:href="@{|/getAllLiveTv|}"><img
+						th:src="@{/images/subscribers_menu.png}" /><span
+						class="nav-label">Live Channel</span></a></li>
+						
+
+		<!-- -			<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'asset') or #strings.contains(#httpServletRequest.getRequestURI(),'bundle') ? 'active':''}"><a
+					href="/"><img th:src="@{/images/content.png}" /><span
+						class="nav-label">Content</span><span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level collapse">
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'asset') ? 'active':''}"><a
+							th:href="@{|/asset/${session.tenantId}|}">View</a></li>
+															
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'bundle') ? 'active':''}"><a
+							th:href="@{'/bundle/{tenantId}'(tenantId=${session.tenantId})}">Bundle</a></li>
+					</ul></li>
+				<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'plan') or #strings.contains(#httpServletRequest.getRequestURI(),'coupon') or #strings.contains(#httpServletRequest.getRequestURI(),'discount') or #strings.contains(#httpServletRequest.getRequestURI(),'emailTemplate') or #strings.contains(#httpServletRequest.getRequestURI(),'smsTemplate') ? 'active':''}"><a
+					href="/"><img th:src="@{/images/configuration.png}" /><span
+						class="nav-label">Configuration</span><span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level collapse">
+
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'plan') ? 'active':''}"><a
+							th:href="@{|/plans/${session.tenantId}|}">Plan</a></li>
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'coupon') ? 'active':''}"><a
+							th:href="@{'/coupons/{tenantId}'(tenantId=${session.tenantId})}">Coupon</a></li>
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'discount') ? 'active':''}"><a
+							th:href="@{'/discounts/{tenantId}'(tenantId=${session.tenantId})}">Discount</a></li>
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'emailTemplate') ? 'active':''}"><a
+							th:href="@{'/ck/{tenantId}'(tenantId=${session.tenantId})}">Email Template</a></li>
+						<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'smsTemplate') ? 'active':''}"><a
+							th:href="@{'/smsck/{tenantId}'(tenantId=${session.tenantId})}">SMS Template</a></li>
+					</ul></li>
+					
+					
+					
+				<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'emailSettings') or #strings.contains(#httpServletRequest.getRequestURI(),'smsSettings')  ? 'active':''}"><a
+					href="/"><img th:src="@{/images/configuration.png}" /><span
+						class="nav-label">Settings</span><span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level collapse">
+<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'emailSettings') ? 'active':''}"><a
+							th:href="@{'/emailSettings/{tenantId}'(tenantId=${session.tenantId})}">Email Settings</a></li>
+							<li
+							th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'smsSettings') ? 'active':''}"><a
+							th:href="@{'/smsSettings/{tenantId}'(tenantId=${session.tenantId})}">SMS Settings</a></li>
+											
+											</ul></li>	
+				
+				
+				
+				
+				
+				
+				
+				
+				<li
+					th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(),'demo') ? 'active':''}"><a
+					href="/demo"><img th:src="@{/images/subscribers_menu.png}" /><span
+						class="nav-label">Preview</span></a></li>  -->
+			</ul>
+		</div>
+	</nav>
+	<!-- side menu end-->
+	<!-- header menu start-->
+	<div id="page-wrapper" class="gray-bg">
+		<div class="row border-bottom">
+			<nav class="navbar navbar-static-top" role="navigation"
+				style="margin-bottom: 0">
+				<div class="navbar-header">
+					<a class="navbar-minimalize minimalize-styl-2 btn btn-primary "
+						href="#"><i class="fa fa-bars"></i> </a>
+					<h4>Customer Relationship Management console</h4>
+					
+				</div>
+				<nav>
+					<ul class="nav navbar-top-links navbar-right">
+						<div class="navbar">
+							<div class="navbar-inner">
+								<div class="container-fluid">
+									<div class="nav-collapse ">
+										<ul class="nav navbar-top-links navbar-right">
+											<li>
+											</li>
+											<li><a onclick="document.logoutform.submit();"> <i
+													class="fa fa-sign-out"></i> Log out
+											</a>
+												<form name="logoutform" method="post" th:action="@{/logout}"
+													role="form"></form></li>
+										</ul>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</ul>
+				</nav>
+			</nav>
+		</div>
+
+
+
+		<!-- header menu end-->
+		<!-- Header Part End -->
+
+		<!-- Main Content Part Start -->
+		<section layout:fragment="content"></section>
+
+		<!-- footer part start -->
+		<!-- footer part end -->
+
+	</div>
+
+	<script th:src="@{/js/jquery-3.1.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+	<script th:src="@{/js/plugins/dataTables/datatables.min.js}"></script>
+	<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	<script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+	<script th:src="@{/js/jquery.multifield.min.js}"></script>
+	<script th:src="@{/js/jquery.validate.min.js}"></script>
+
+	<!-- Dual Listbox -->
+	<script
+		th:src="@{/js/plugins/dualListbox/jquery.bootstrap-duallistbox.js}"></script>
+
+	<script th:src="@{/js/plugins/fullcalendar/moment.min.js}"></script>
+
+	<script th:src="@{/js/plugins/daterangepicker/daterangepicker.js}"></script>
+	
+	<script th:src="@{/js/plugins/datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+
+	<script th:src="@{/js/Chart-2.5.0.min.js}"></script>
+
+
+	<!-- Custom and plugin javascript -->
+	<script th:src="@{/js/inspinia.js}"></script>
+	<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	<script th:src="@{/js/checkTree.js}"></script>
+	<script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	<script th:src="@{/js/plugins/slick/slick.min.js}"></script>
+	<script th:src="@{/js/jquery.slimscroll.min.js}"></script>
+	<script th:src="@{/js/bootstrap-datepicker.js}"></script>
+	<script th:src="@{/js/jasny-bootstrap.min.js}"></script>
+	<!-- <script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script> -->
+	<script th:src="@{/js/plugins/sweetalert/sweetalert.min.js}"></script>
+	<script th:src="@{/js/cms.js}"></script>
+
+
+	<div layout:fragment="customscripts">
+		<script th:src="@{/scripts/search.js}"></script>
+	</div>
+
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layoutLogged">
+<head>
+    <!-- Include jQuery and DataTables -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <!-- Font Awesome CSS (for the eye icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriber - CRM</title>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <!-- Navigation menu start -->
+    <!-- <div th:include="navigationFragment :: navigationBar"></div> -->
+    <!-- Navigation menu end -->
+    <!-- <div th:if="${pager.totalPages == 0}" class="alert alert-danger alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        No Results found
+    </div> -->
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Live Channels</h5>
+                        
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li><a href="#">Config option 1</a></li>
+                                <li><a href="#">Config option 2</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="search_bar">
+                            <form id="searchForm" class="navbar-form" role="search">
+                            <div>
+   <div>
+    <span style="font-weight: bold; margin-left:-400px;">Viewer Count :</span>
+    <span style="font-weight: bold; margin-left: 1px;" th:text="${DistinctUser}"></span>
+</div>
+
+</div>
+<div class="col-sm-1">
+    <select class="form-control contentInfo" aria-invalid="false" name="packageIds" th:attr="onchange='contentEvent()'">
+        <option value="">Select</option>
+        <!-- Loop through the JSON array and dynamically generate options -->
+        <option th:each="live : ${assetInfoList}" th:value="${live.assetId}" th:text="${live.name}"></option>
+        <!-- Loop through the JSON array and dynamically generate options -->
+    </select>
+</div>
+
+                                
+                            </form>
+                        </div>
+                        
+                        <table id="contentTable" class="table">
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Device Id</th>
+            <th>Action</th>
+            <th>ElapsedTime</th>
+            <th>CreatedAt</th>
+            <th>ModifiedAt</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="content : ${contentInfoList}">
+            <td th:text="${content.fields.userId}"></td>
+            <td th:text="${content.fields.deviceId}"></td>
+            <td th:text="${content.fields.action}"></td>
+            <td th:text="${content.fields.elapsedTime}"></td>
+            <td th:text="${content.fields.createdAt}"></td>
+            <td th:text="${content.fields.modifiedAt}"></td>
+            
+            
+        </tr>
+    </tbody>
+</table>
+
+                   
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#contentTable').DataTable({
+            "paging": true,  // Enable pagination
+            "pageLength": 10 // Set the number of records per page
+        });
+
+        // Get the <select> element
+        var selectElement = $('.contentInfo');
+
+        // Add event listener for the change event
+        selectElement.on('change', function() {
+            // Get the selected option
+            var selectedOption = $(this).find(':selected');
+            var selectedValue = selectedOption.val();
+        
+            window.location.href = '/getAllLiveTv?contentId=' + selectedValue;
+        });
+    });
+</script>
+
+     <script>
+ // Get the <select> element
+    var selectElement = document.querySelector('.contentInfo');
+
+    // Add event listener for the change event
+    selectElement.addEventListener('change', function() {
+        // Get the selected option
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var selectedValue = selectedOption.value;
+        
+        window.location.href = '/getAllLiveTv?contentId='+selectedValue;
+     
+    });
+
+</script>
+<style>
+    .dataTables_info {
+        display: none;
+    }
+ 
+</section>
+
+<div layout:fragment="customscripts">
+    <!-- Your custom scripts -->
+   
+
+
+</div>
+
+
+
+</body>
+</html>
