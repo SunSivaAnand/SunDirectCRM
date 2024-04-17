@@ -35,21 +35,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		
-		log.info("done...!");
+		log.info("Logged in successfully...!");
 		String username = request.getParameter("username");
-		log.info("done...!" +username);
-		
-		 AppUser user = appUserService.findUsername(username);
-		 log.info("tenantid" +user.getTenantId());
-		 
-		 HttpSession session = request.getSession();
+		AppUser user = appUserService.findUsername(username);
+		HttpSession session = request.getSession();
 	        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	        log.info("authuser" +authUser);
 	        session.setAttribute("username", authUser.getUsername());
 	        session.setAttribute("authorities", authentication.getAuthorities());
-	        session.setAttribute("tenantId", user.getTenantId());
-	         
-	        
+	        session.setAttribute("tenantId", user.getTenantId());       
 	        response.setStatus(HttpServletResponse.SC_OK);	 	       
 	        response.sendRedirect("/sms/subscriber/info");
 	        

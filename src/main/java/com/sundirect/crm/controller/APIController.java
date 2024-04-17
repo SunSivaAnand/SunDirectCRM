@@ -27,6 +27,8 @@ import com.sundirect.crm.bean.OrderCreationAPI;
 import com.sundirect.crm.bean.Plan;
 import com.sundirect.crm.bean.SDPlan;
 import com.sundirect.crm.bean.UserInfo;
+import com.sundirect.crm.bean.UserSignUp;
+import com.sundirect.crm.config.AppUserService;
 import com.sundirect.crm.service.APIService;
 import com.sundirect.crm.utils.ApiReturn;
 
@@ -35,6 +37,9 @@ public class APIController {
 	private static final Logger log = LoggerFactory.getLogger(APIController.class);
 	@Autowired
 	APIService apiservice;
+	
+	@Autowired
+	AppUserService appUserService;
 
 	@GetMapping(value = "/api/AllplansAPI")
 	public List<SDPlan> getAllPlan(@RequestParam(name = "status") String status, HttpServletRequest request) {
@@ -139,6 +144,15 @@ public class APIController {
 			log.info("Exception occur: {}", e.getMessage());
 			return null;
 		}
+	}
+	
+	
+	@PostMapping(value="/api/sms/signup", consumes = "application/json")
+	public String signUp(@RequestBody UserSignUp user) {		
+		
+		String resp=appUserService.userSignUp(user);
+				
+		return resp;		
 	}
 
 }

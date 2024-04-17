@@ -1,14 +1,16 @@
 package com.sundirect.crm.config;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import java.util.Set;
 
-
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,10 +18,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sundirect.crm.bean.AppUser;
 import com.sundirect.crm.bean.Login;
+import com.sundirect.crm.bean.UserSignUp;
 import com.sundirect.crm.service.UserLoginService;
 
 
@@ -32,6 +39,9 @@ public class AppUserServiceImpl implements AppUserService {
 
 	@Autowired
 	UserLoginService userLoginService;
+	
+	@Value("${user.info.file}")
+	private String file;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -128,6 +138,31 @@ public class AppUserServiceImpl implements AppUserService {
 			}
 		}
 		return appUser;
+	}
+
+	@Override
+	public String userSignUp(UserSignUp details) {
+		
+		try {
+		ObjectMapper mapper=new ObjectMapper();
+		ObjectNode json = mapper.createObjectNode();
+		String prev=mapper.writeValueAsString(mapper.readTree(new File(file)));
+		String[] count=prev.split("}");				
+		json.put("id", count.length);
+		json.put("name", details.getName());
+		PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+		json.put("key", passwordEncoder.encode(details.getKey()));
+		json.put("role", details.getRole());
+		json.put("tenant name", details.getTenantName());
+		json.put("tenant id", details.getTenantId());
+		String jsonString = mapper.writeValueAsString(json);
+		return userLoginService.userSignUp(jsonString,file,prev);
+		}
+		catch (Exception e) {
+			log.info("failed due to exception: {}",e.getMessage());
+			e.printStackTrace();
+			return "failed";
+		}
 	}
 
 }

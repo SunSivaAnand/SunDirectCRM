@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="MYPLEX_LOGS" value="logs" />
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- <layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout> -->
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}.%M \(%line\) - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<appender name="SAVE-TO-LOGS"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${MYPLEX_LOGS}/crmsundirect.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		
+			<fileNamePattern>${MYPLEX_LOGS}/myplexsms.%d{yyyy-MM-dd-HH}.%i.log
+                        </fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				 <maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>-->
+		
+		
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>
+          ${MYPLEX_LOGS}/crmsundirect.%d{yyyy-MM-dd-HH}.%i.log
+      </fileNamePattern>
+      <maxFileSize>10MB</maxFileSize>
+      <maxHistory>10</maxHistory>
+      <totalSizeCap>100MB</totalSizeCap>
+    </rollingPolicy>
+	</appender>
+	
+	<!-- Send logs to both console and file audit -->
+	<logger name="com.myplex.sms.*" level="info" additivity="false">
+		<appender-ref ref="SAVE-TO-LOGS" />
+		<appender-ref ref="STDOUT" />		
+	</logger>
+	
+	<!-- <logger name="org.springframework.web" level="DEBUG">
+	 <appender-ref ref="SAVE-TO-LOGS" />
+   </logger> -->
+
+	<logger name="org.springframework.security" level="INFO">
+		<appender-ref ref="SAVE-TO-LOGS" />
+	</logger>
+    
+    <logger name="org.hibernate.stat" level="TRACE">        
+        <appender-ref ref="SAVE-TO-LOGS" />
+    </logger>
+    
+  <!--   <logger name="org.hibernate.SQL" level="DEBUG">        
+        <appender-ref ref="SAVE-TO-LOGS" />
+    </logger> -->
+    
+    <logger name="org.springframework.security" level="INFO">        
+        <appender-ref ref="SAVE-TO-LOGS" />
+    </logger>
+    
+
+	<root level="info">
+		<appender-ref ref="SAVE-TO-LOGS" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>
