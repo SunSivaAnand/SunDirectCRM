@@ -11,10 +11,27 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
     <!-- Font Awesome CSS (for the eye icon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+<!-- JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscriber - CRM</title>
+    <style>
+    .dataTables_info {
+        display: none;
+        
+    }
+   
+   
+
+
+   
+ </style>
 </head>
 
 <body>
@@ -32,7 +49,10 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Live Channels</h5>
-                        
+                                <button class="btn btn-danger" type="button" style="margin-left: 750px">
+
+            Viewer Count: <span id="count" th:text="${DistinctUser != null ? DistinctUser : '0'}"></span>
+        </button>
                         <div class="ibox-tools">
                             <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                             <ul class="dropdown-menu dropdown-user">
@@ -42,27 +62,31 @@
                         </div>
                     </div>
                     <div class="ibox-content">
-                        <div class="search_bar">
-                            <form id="searchForm" class="navbar-form" role="search">
-                            <div>
-   <div>
-    <span style="font-weight: bold; margin-left:-400px;">Viewer Count :</span>
-    <span style="font-weight: bold; margin-left: 1px;" th:text="${DistinctUser}"></span>
+                      
+<div class="search_bar" style="width: 700px;">
+    <form id="searchForm" class="navbar-form" role="search">
+        <select class="form-control contentInfo" aria-invalid="false" name="packageIds" th:attr="onchange='contentEvent()'" >
+            <option value="">Select</option>
+            <!-- Loop through the JSON array and dynamically generate options -->
+            <option th:each="live : ${assetInfoList}"
+                    th:value="${live.assetId}"
+                    th:text="${#strings.length(live.name) > 15 ? #strings.substring(live.name, 0, 15) + '...' : live.name}"
+                    th:title="${live.name}"
+                    th:selected="${live.assetId eq selectedAssetId}"
+                    style="display: inline-block;
+                           max-width: 150px;
+                           overflow: hidden;
+                           text-overflow: ellipsis;
+                           white-space: nowrap;">
+            </option>
+            <!-- End of loop -->
+        </select>
+    </form>
 </div>
 
-</div>
-<div class="col-sm-1">
-    <select class="form-control contentInfo" aria-invalid="false" name="packageIds" th:attr="onchange='contentEvent()'">
-        <option value="">Select</option>
-        <!-- Loop through the JSON array and dynamically generate options -->
-        <option th:each="live : ${assetInfoList}" th:value="${live.assetId}" th:text="${live.name}"></option>
-        <!-- Loop through the JSON array and dynamically generate options -->
-    </select>
-</div>
 
-                                
-                            </form>
-                        </div>
+                
+
                         
                         <table id="contentTable" class="table">
     <thead>
@@ -136,11 +160,15 @@
     });
 
 </script>
-<style>
-    .dataTables_info {
-        display: none;
-    }
- 
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.contentInfo').select2({
+            placeholder: 'Search for live channnel',
+            allowClear: true // Optional, adds a clear button
+        });
+    });
+</script>
+
 </section>
 
 <div layout:fragment="customscripts">

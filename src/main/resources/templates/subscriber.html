@@ -15,6 +15,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscriber - CRM</title>
     
+	<style>
+    
+       .clearable-input {
+  position: relative;
+}
+
+.clearable-input input[type="search"] {
+  padding-right: 30px; /* Space for the clear button */
+}
+
+.clearable-input [data-clear-input] {
+  position: absolute;
+  top: 50%;
+  right: 55px;
+  top:15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+   display: block;
+}
+
+.clearable-input [data-clear-input]:hover {
+  color: #666;
+}
+       </style>
 </head>
 
 <body>
@@ -61,7 +86,7 @@
                                     </select>
                                 </div>
                                 <div class="input-group clearable-input col-sm-6">
-                                    <input type="text" class="form-control" placeholder="Search subscriber mobileNo"
+                                    <input type="text" class="form-control" placeholder="Search"
                                            id="query" name="query" th:value="${query}">
                                     <span data-clear-input>&times;</span>
                                     <div class="input-group-btn">
@@ -247,7 +272,7 @@
     <div class="col-sm-5">
         <div class="form-group" id="data_10">
             <div class="input-group date">
-                <input type="date" id="_planFromDate" name="_planFromDate" class="form-control" >
+                <input type="date" id="_planFromDate" name="_planFromDate" class="form-control"  >
             </div>
         </div>
     </div>
@@ -257,7 +282,8 @@
     <div class="col-sm-4">
         <div class="form-group" id="data_10">
             <div class="input-group date">
-                <input type="date" id="_planToDate" name="_planToDate" class="form-control" >
+             <input type="date" id="_planToDate" name="_planToDate" class="form-control" >
+
             </div>
         </div>
     </div>
@@ -373,8 +399,15 @@ function updateTable(table, planData) {
             }
             cell.appendChild(button);
 
-            cell = row.insertCell(2);
+            var cell = row.insertCell(2);
             cell.textContent = plan.plan.name;
+            cell.title = plan.plan.name;
+            cell.style.display = "inline-block";
+            cell.style.maxWidth = "150px";
+            cell.style.overflow = "hidden";
+            cell.style.textOverflow = "ellipsis";
+            cell.style.whiteSpace = "nowrap";
+
 
             cell = row.insertCell(3);
             cell.textContent = from.toISOString().slice(0, 10); // Display date only
@@ -467,6 +500,7 @@ function updateDeviceTable(table, planData) {
 </script>
 <script>
 async function otherInfo(userId) {
+	
 	// Get the input element
 	var fromDateInput = document.getElementById('_planFromDate');
 	var toDateInput = document.getElementById('_planToDate');
@@ -622,6 +656,12 @@ function eventData1(){
             allowClear: true // Optional, adds a clear button
         });
     });
+ 
+ document.addEventListener('DOMContentLoaded', function() {
+	  document.querySelector('[data-clear-input]').addEventListener('click', function() {
+	    document.querySelector('.clearable-input input[type="search"]').value = '';
+	  });
+	});
 </script>
 
 
