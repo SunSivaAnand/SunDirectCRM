@@ -52,7 +52,7 @@
 .clearable-input [data-clear-input] {
   position: absolute;
   top: 50%;
-  right: 55px;
+  right: 70px;
   top:15px;
   transform: translateY(-50%);
   cursor: pointer;
@@ -112,16 +112,14 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="input-group clearable-input col-sm-6">
-                                    <input type="search" class="form-control" placeholder="Search"
-                                           id="query" name="query" th:value="${query}">
-                                    <span data-clear-input>&times;</span>
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-primary" data-target="#searchAdd" id="searchButton"
-                                                type="submit">GO!
-                                        </button>
-                                    </div>
-                                </div>
+                               <div class="input-group clearable-input col-sm-6">
+    <input type="search" class="form-control" placeholder="Search" id="query" name="query" th:value="${query}">
+    <span data-clear-input>&times;</span>
+    <div class="input-group-btn" style="padding-left: 10px;"> <!-- Adjust the margin-left for spacing -->
+        <button class="btn btn-primary" data-target="#searchAdd" id="searchButton" type="submit">GO!</button>
+    </div>
+</div>
+
                             </form>
                         </div>
                         <div th:if="${user != null}" id="userDetails">
@@ -160,9 +158,11 @@
                                     </button>
                                   
                                    <div th:if="${showButtom}">
-<button style="margin: 0 450px;" class="button-33  " data-toggle="modal"
-                                            data-target='#createPlan' type="button">Add subscription
-</button></div>
+<button style="margin: 0 500px;" class=" button-33" data-toggle="modal"
+                                            th:attr="data-target='#createPlan', data-userid=${user.id},data-smcNo=${user.fields.smc},data-mobileNo=${user.fields.mobileNo},data-show=${showButtom}"
+                                            onclick="addPlan(this.getAttribute('data-userid'),this.getAttribute('data-smcNo'),this.getAttribute('data-mobileNo'))"
+                                            type="button"> Add Subscription
+                                    </button></div>
                                 </div>
                             </div>
                         </div>
@@ -261,16 +261,16 @@
     </div>
     
     <!-- User information -->
-    <div th:each="user : ${user}">
+   
         <div class="form-group">
             <label for="smc">SMC</label>
-            <input readonly th:value="${user.fields.smc}" type="text" class="form-control" id="smc" name="smc">
+            <input readonly  type="text" class="form-control" id="smcForm" name="smc">
         </div>
         <div class="form-group">
             <label for="mobileNo">Mobile No</label>
-            <input readonly th:value="${user.fields.mobileNo}" type="text" class="form-control" id="mobileNo" name="mobileNo">
+            <input readonly  type="text" class="form-control" id="mobileForm" name="mobileNo">
         </div>
-    </div>
+    
 </form>
 
             </div>
@@ -320,14 +320,11 @@
     </div>
     
 </div>
-  <div th:if="${user != null}" id="userDetails">
-   <div th:each="user : ${user}">
+  
 <div class="col-sm-1" style="padding-left: 20px;">
-        <button class="btn btn-primary" th:attr="data-target='#other' ,data-userid=${user.id}"
-                                            onclick="otherInfo(this.getAttribute('data-userid'))" id="searchButton" type="submit" >Click Here!</button>
+       <button class="btn btn-primary" th:attr="data-target='#other'" onclick="otherInfo(this.getAttribute('data-userid'))" id="userButton" type="submit">Click Here!</button>
     </div>
-     </div>
-</div>
+    
                 <table class="table" id="otherTable">
                     <thead>
                         <tr style="color:#1B4F72;">
@@ -360,8 +357,21 @@
 </script>
 <script>
 
+function addPlan(userId,smc,mobile){
+	
+	console.log("dfsde")
+	 document.querySelector("#smcForm").value = smc;
+	 document.querySelector("#mobileForm").value = mobile;
+	
+}
+
+
+
+</script>
+<script>
+
 async function subscriptionInfo(userId,smcNo,mobile,showBtn) {
-	var s= smc;
+
     var url = '/api/user/subscription/'+userId+'/IN';
     var modal = document.getElementById('subscription'); // Get the modal element
 
@@ -622,7 +632,11 @@ function updateDeviceTable(table, planData) {
 <script>
 async function otherInfo(userId) {
 	
-	// Get the input element
+	var fetchedUserId = userId;
+
+    // Set the data-userid attribute of the button to the fetched user ID
+     document.querySelector("#userButton").setAttribute("data-userid", fetchedUserId);
+
 	var fromDateInput = document.getElementById('_planFromDate');
 	var toDateInput = document.getElementById('_planToDate');
 	
