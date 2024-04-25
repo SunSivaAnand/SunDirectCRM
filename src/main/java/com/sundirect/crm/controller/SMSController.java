@@ -293,6 +293,10 @@ public class SMSController {
 			log.info("Checking Dates are null...........");
 			Date currentDate = new Date();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(currentDate);
+			calendar1.add(Calendar.DAY_OF_MONTH, +1);
+			currentDate=calendar1.getTime();
 			formattedcurrentDate = dateFormat.format(currentDate);
 
 			Calendar calendar = Calendar.getInstance();
@@ -313,6 +317,10 @@ public class SMSController {
 				log.info("Checking Dates are null...........");
 				Date currentDate = new Date();
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Calendar calendar1 = Calendar.getInstance();
+				calendar1.setTime(currentDate);
+				calendar1.add(Calendar.DAY_OF_MONTH, +1);
+				currentDate=calendar1.getTime();
 				formattedcurrentDate = dateFormat.format(currentDate);
 
 				Calendar calendar = Calendar.getInstance();
