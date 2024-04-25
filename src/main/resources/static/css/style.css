@@ -798,6 +798,7 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
 	background-color: #6495ED;
 	border-color: #6495ED;
 	color: #FFFFFF;
+	border-radius:10px;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active,
@@ -2068,7 +2069,7 @@ div.dt-button-info {
 	background-color: #FFFFFF;
 	background-image: none;
 	border: 1px solid #e5e6e7;
-	border-radius: 1px;
+	border-radius: 10px;
 	color: inherit;
 	display: block;
 	padding: 6px 12px;
