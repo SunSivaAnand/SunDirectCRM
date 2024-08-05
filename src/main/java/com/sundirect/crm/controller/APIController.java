@@ -194,11 +194,11 @@ public class APIController {
 			if (authentication != null && authentication.getAuthorities().stream()
 					.anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
 				updatedJsonString = "{" + "\"results\"" + ":" + jsonString + "," + "\"showButtom\"" + ":" + true + "}";
-				log.info("checking show button1: {}", updatedJsonString);
+				//log.info("checking show button1: {}", updatedJsonString);
 				// ((ObjectNode) jsonNode1).put("showButtom",true);
 			} else {
 				updatedJsonString = "{" + "\"results\"" + ":" + jsonString + "," + "\"showButtom\"" + ":" + false + "}";
-				log.info("checking show button2: {}", updatedJsonString);
+				//log.info("checking show button2: {}", updatedJsonString);
 				// ((ObjectNode) jsonNode1).put("showButtom", false);
 			}
 			JsonNode finalJsonNode = objectMapper.readTree(updatedJsonString);

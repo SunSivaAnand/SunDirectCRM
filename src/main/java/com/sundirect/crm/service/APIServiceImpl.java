@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sundirect.crm.bean.APIKey;
 import com.sundirect.crm.bean.Asset;
 import com.sundirect.crm.bean.OrderCreation;
 import com.sundirect.crm.bean.OrderCreationAPI;
@@ -73,6 +74,9 @@ public class APIServiceImpl implements APIService{
 	
 	@Value("${API.sms.allAssetByType}")
 	private String allAssetByType;
+	
+	@Value("${API.info.sign}")
+	private String signPath;
 	
 	@Override
 	public String getAllPlanAPI(String status) {
@@ -194,24 +198,24 @@ public class APIServiceImpl implements APIService{
 		try {
 			String path=apiPath;
 			log.info("Order creation Url Path: {}",path);
-			Map<String, String> map=new HashMap<String, String>();
-			map=checkSum.generateCheckSum(model,csk);
-			String key="";
-			String value="";
-			for(String s:map.keySet()) {
-				key=s;
-				value=map.get(key);
-			}
-			log.info("timestamp: {} hash: {}",key,value);
+			/*
+			 * Map<String, String> map=new HashMap<String, String>();
+			 * map=checkSum.generateCheckSum(model,csk); String key=""; String value="";
+			 * for(String s:map.keySet()) { key=s; value=map.get(key); }
+			 */
+			
+			APIKey apiKey=checkSum.fetchAPIKeys(apiUrl+signPath, model);
+			
+			log.info("timestamp: {} hash: {}",apiKey.getTimeStamp(),apiKey.getSignature());
 			log.info("smc: {} mobile: {} planId: {} action: {}",model.getSmc(),model.getMobileNo(),model.getPackageIds(),model.getAction());
 			URL url = new URL(path);
 			connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("content-type", "application/json");
 			connection.setRequestProperty("Accept", "application/json");
-			connection.setRequestProperty("X-myplex-signature",value );
+			connection.setRequestProperty("X-myplex-signature",apiKey.getSignature());
 			connection.setRequestProperty("X-myplex-partnerid", "SUNDIRECT");			
-			connection.setRequestProperty("X-myplex-timestamp", key);
+			connection.setRequestProperty("X-myplex-timestamp",apiKey.getTimeStamp());
 			connection.setRequestProperty("X-myplex-platform", "WEB_CLIENT");
 			connection.setRequestProperty("X-forwarded-for", ipAddress);
 			connection.setDoOutput(true);

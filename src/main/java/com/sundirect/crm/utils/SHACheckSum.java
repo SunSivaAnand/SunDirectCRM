@@ -1,5 +1,12 @@
 package com.sundirect.crm.utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,10 +24,13 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sundirect.crm.bean.APIKey;
 import com.sundirect.crm.bean.OrderCreationAPI;
 import com.sundirect.crm.service.APIServiceImpl;
 
 public class SHACheckSum {
+	
+	
 
 	private static final Logger log = LoggerFactory.getLogger(APIServiceImpl.class);
 
@@ -97,6 +107,75 @@ public class SHACheckSum {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	
+	public APIKey fetchAPIKeys(String apiPath,OrderCreationAPI model) {
+		HttpURLConnection connection = null;
+		APIKey apiKey=new APIKey();
+		String resp;
+		String result;
+		String path=apiPath;
+		log.info("Order creation Url Path: {}",path);
+		try {
+			URL url = new URL(path);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("content-type", "application/json");
+			connection.setRequestProperty("Accept", "application/json");
+			//connection.setRequestProperty("X-myplex-signature",value );
+			connection.setRequestProperty("X-myplex-partnerid", "SUNDIRECT");			
+			//connection.setRequestProperty("X-myplex-timestamp", key);
+			//connection.setRequestProperty("X-myplex-platform", "WEB_CLIENT");
+			//connection.setRequestProperty("X-forwarded-for", ipAddress);
+			connection.setDoOutput(true);
+			OutputStream os = connection.getOutputStream();
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String json = ow.writeValueAsString(model);
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(json);
+			writer.flush();
+			writer.close();
+			os.close();
+			connection.connect();
+			StringBuilder sb = new StringBuilder();
+			int responseCode = connection.getResponseCode();
+			log.info("responsecode " + responseCode);
+			// log.info("request body " + createPayLoadSoap(rp));
+			log.info("content-type " + connection.getContentType());
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				log.info("inside httok");
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				br.close();
+				resp = sb.toString();
+				log.info("response" + resp);
+				JSONObject jsonobj = new JSONObject(resp);
+				//result = jsonobj.getString("message");
+				
+				apiKey.setSignature(jsonobj.getString("signature"));
+				apiKey.setTimeStamp(jsonobj.getString("timestamp"));
+				log.info("apiKey-signature::: {}",apiKey.getSignature());
+				log.info("apiKey-signature::: {}",apiKey.getTimeStamp());
+				return apiKey;
+			}
+			log.info("RESPONSE MESSAGE " + connection.getResponseMessage());
+			resp = connection.getResponseMessage();
+			return apiKey;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			log.info(e.getMessage());
+		}finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
+		}		
+		return apiKey;
+		
 	}
 
 }

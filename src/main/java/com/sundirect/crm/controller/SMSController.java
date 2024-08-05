@@ -64,6 +64,9 @@ public class SMSController {
 
 	@Value("${application.version}")
 	private String version;
+	
+	@Value("${API.api.sk}")
+	private String sk;
 
 	@GetMapping(value = "/api/Allplans")
 	public String getAllPlan(Model model, @RequestParam(name = "status") String status, HttpServletRequest request) {
@@ -88,6 +91,7 @@ public class SMSController {
 	@GetMapping(value = "/sms/subscriber/info")
 	public String customerInfo(Model model, @RequestParam(value = "query", required = true) Optional<String> query,
 			@RequestParam(value = "requestType") Optional<String> requestType) {
+		model.addAttribute("secertkey", sk);
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.getAuthorities().stream()
@@ -448,7 +452,7 @@ public class SMSController {
 			log.info("Distinct user: {} and listSzie: {}",count,contentInfoList.size());
 			model.addAttribute("contentInfoList",contentInfoList);	
 			model.addAttribute("DistinctUser",count);
-			
+			model.addAttribute("selectedAssetId",contentId);
 			}					
 			//return "live";			
 

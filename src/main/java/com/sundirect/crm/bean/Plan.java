@@ -22,8 +22,17 @@ public class Plan {
 	    private List<Bundle> planBundleMapping;
 	    private List<Pricing> pricing;
 	    private String accessLabel;
+	    private String validityTill;
 	    
 	    
+	    
+	    
+		public String getValidityTill() {
+			return validityTill;
+		}
+		public void setValidityTill(String validityTill) {
+			this.validityTill = validityTill;
+		}
 		public List<Bundle> getPlanBundleMapping() {
 			return planBundleMapping;
 		}
