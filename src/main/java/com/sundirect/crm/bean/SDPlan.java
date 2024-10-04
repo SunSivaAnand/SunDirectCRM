@@ -2,7 +2,7 @@ package com.sundirect.crm.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SDPlan {
+public class SDPlan implements Comparable<SDPlan>{
 	
 	private String model;
     private int pk;
@@ -105,6 +105,9 @@ public class SDPlan {
 		this.fields = fields;
 	}
     
-    
+	@Override
+	public int compareTo(SDPlan other) {
+	    return this.fields.getPlan_name().compareTo(other.fields.getPlan_name());	      
+	}
 
 }

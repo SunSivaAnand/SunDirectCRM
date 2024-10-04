@@ -68,6 +68,13 @@ public class SMSController {
 	@Value("${API.api.sk}")
 	private String sk;
 
+	@Value("${plan.decide.check}")
+	private boolean planDecide;
+	
+	@Value("${plan.decide.name}")
+	private String planName;
+	
+	
 	@GetMapping(value = "/api/Allplans")
 	public String getAllPlan(Model model, @RequestParam(name = "status") String status, HttpServletRequest request) {
 
@@ -203,7 +210,7 @@ public class SMSController {
 			final List<Plan> smsFinalList = smsplanList;
 			List<SDPlan> finalList = new ArrayList<SDPlan>();
 			finalList = planList.stream().filter(
-					obj1 -> smsFinalList.stream().anyMatch(obj2 -> obj2.getPlanId() == obj1.getFields().getSmsPlanId()))
+					obj1 -> smsFinalList.stream().anyMatch(obj2 -> obj2.getPlanId() == obj1.getFields().getSmsPlanId())).sorted()
 					.collect(Collectors.toList());
 
 			// JSONObject jsonObj=new JSONObject(returnVal);
@@ -212,6 +219,16 @@ public class SMSController {
 			// log.info("json string: {}",jsonNode.toString());
 			//log.info("SD plan list final size: {}", finalList.size());
 			// return finalList;
+			if(planDecide) {
+				for(SDPlan sdplan:finalList) {
+					if(sdplan.getFields().getPlan_name().equalsIgnoreCase(planName)) {
+						finalList = new ArrayList<SDPlan>();
+						finalList.add(sdplan);
+						break;
+					}
+				}				
+			}
+			
 			model.addAttribute("finalList", finalList);
 
 		} catch (Exception e) {
@@ -484,4 +501,59 @@ public class SMSController {
 		String resp=appUserService.userSignUp(user);				
 		return resp;		
 	}
+	
+	
+	@GetMapping("/sms/getPlanOnAsset")
+	public String getPlanOnAsset(Model model,@RequestParam String status, @RequestParam String asset)  {
+		String response =apiService.getPlanOnAsset(asset, status);
+		try {		
+		JSONObject json= new JSONObject(response);
+		JSONObject errorJson=new JSONObject(json.get("error").toString());
+		model.addAttribute("error", errorJson);
+		model.addAttribute("message",errorJson.get("message"));
+		model.addAttribute("repsonse",response);
+		}
+		catch(Exception e) {
+			log.info("Exception Occurred : {}",e.getMessage());
+		}	
+		return response;	
+		
+	}
+	
+	
+	@GetMapping("/sms/getAllAssetOnPlan")
+	public String getAssetofPlan(Model model,@RequestParam String plan)  {
+		String response =apiService.getAllAssetOnPlan(plan);
+		try {		
+		JSONObject json= new JSONObject(response);
+		JSONObject errorJson=new JSONObject(json.get("error").toString());
+		model.addAttribute("error", errorJson);
+		model.addAttribute("message",errorJson.get("message"));
+		model.addAttribute("repsonse",response);
+		}
+		catch(Exception e) {
+			log.info("Exception Occurred : {}",e.getMessage());
+		}	
+		return response;	
+		
+	}
+	
+	
+	@GetMapping("/sms/getAllAssetOnBundle")
+	public String getAssetofBundle(Model model,@RequestParam String bundle)  {
+		String response =apiService.getAllAssetOnBundle(bundle);
+		try {		
+		JSONObject json= new JSONObject(response);
+		JSONObject errorJson=new JSONObject(json.get("error").toString());
+		model.addAttribute("error", errorJson);
+		model.addAttribute("message",errorJson.get("message"));
+		model.addAttribute("repsonse",response);
+		}
+		catch(Exception e) {
+			log.info("Exception Occurred : {}",e.getMessage());
+		}	
+		return response;	
+		
+	}
+	
 }

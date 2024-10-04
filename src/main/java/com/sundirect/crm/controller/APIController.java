@@ -187,7 +187,7 @@ public class APIController {
 			ObjectMapper objectMapper1 = new ObjectMapper();
 			ArrayNode arrayNode = objectMapper1.valueToTree(subListEdited);
 			JsonNode jsonNode1 = (JsonNode) arrayNode;
-			log.info("final string: {}", jsonNode1);
+			//log.info("final string: {}", jsonNode1);
 			String jsonString = objectMapper.writeValueAsString(jsonNode1);
 			String updatedJsonString = "";
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -217,6 +217,31 @@ public class APIController {
 		String resp = appUserService.userSignUp(user);
 
 		return resp;
+	}
+	
+	
+	@GetMapping(value="/api/getAllPlanForAsset")
+	public String getAllPlanForAsset(@RequestParam String asset,@RequestParam String status) {
+		
+		String response =apiservice.getPlanOnAsset(asset, status);
+		return response;
+		
+	}
+	
+	
+	@GetMapping(value="/api/getAllAssetOnPlan")
+	public String getAllAssetOnPlan(@RequestParam String planId) {
+		
+		String response =apiservice.getAllAssetOnPlan(planId);
+		return response;
+		
+	}
+	
+	
+	@GetMapping(value="/api/getAllAssetOnBundle")
+	public String getAllAssetOnBundle(@RequestParam String bundle){		
+		String response =apiservice.getAllAssetOnBundle(bundle);
+		return response;		
 	}
 
 }

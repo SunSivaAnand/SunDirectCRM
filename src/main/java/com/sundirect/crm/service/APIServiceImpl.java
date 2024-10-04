@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,6 +79,18 @@ public class APIServiceImpl implements APIService{
 	
 	@Value("${API.info.sign}")
 	private String signPath;
+	
+	@Value("${API.sms.planOnAsset}")
+	private String planOnAsset;
+	
+	@Value("${API.sms.planForAsset}")
+	private String planForAsset;
+	
+	@Value("${API.sms.assetsInPlan}")
+	private String assetsInPlan;
+	
+	@Value("${API.sms.assetsInBundle}")
+	private String assetsInBundle;
 	
 	@Override
 	public String getAllPlanAPI(String status) {
@@ -618,6 +632,45 @@ public class APIServiceImpl implements APIService{
 		}
 		
 	}
+	
+	@Override
+	public String getPlanOnAsset(String asset,String status) {
+		
+		RestTemplate restTemplate= new RestTemplate();
+		HttpHeaders headers= new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		String builtURL=smsPath+planForAsset+"?assetId="+asset+"&status="+status;
+		log.info("Plan For a Asset Build path: {}",builtURL);
+		String response=restTemplate.getForObject(builtURL, String.class);
+		log.info("response from SMS {}",response);
+		return response;	
+		
+	}
+
+	@Override
+	public String getAllAssetOnPlan(String plan) {
+		RestTemplate restTemplate= new RestTemplate();
+		HttpHeaders headers= new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		String builtURL=smsPath+assetsInPlan+"?planId="+plan;
+		log.info("all Assets of Plan Build path: {}",builtURL);
+		String response=restTemplate.getForObject(builtURL, String.class);
+		log.info("response from SMS {}",response);
+		return response;
+	}
+
+	@Override
+	public String getAllAssetOnBundle(String bundle) {
+		RestTemplate restTemplate= new RestTemplate();
+		HttpHeaders headers= new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		String builtURL=smsPath+assetsInBundle+"?bundleName="+bundle;
+		log.info("all Assets of Bundle Build path: {}",builtURL);
+		String response=restTemplate.getForObject(builtURL, String.class);
+		log.info("response from SMS {}",response);
+		return response;
+	}
+	
 	
 
 }

@@ -27,4 +27,10 @@ public interface APIService {
 	String getAllLiveAsset();
 	
 	String getAllDetailBasedAsset(String contentId);
+	
+	String getPlanOnAsset(String asset, String status);
+	
+	String getAllAssetOnPlan(String plan);
+	
+	String getAllAssetOnBundle(String bundle);
 }
